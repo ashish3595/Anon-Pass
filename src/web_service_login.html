@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Log-in</title>
+
+  <link rel='stylesheet prefetch' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+  <link rel="stylesheet" type="text/css" href="web_service_style.css">
+
+  <script type="text/javascript">
+
+  function WebSocketTest_CheckTicket(ticket)
+  {
+    if ("WebSocket" in window)
+    {
+     console.log("WebSocket is supported by your Browser!");
+       		// Let us open a web socket
+          var ws = new WebSocket("ws://localhost:9998/echo");
+
+          ws.onopen = function()
+          {
+              	// Web Socket is connected, send data using send()
+              	ws.send(ticket + " " + "random" + " " + "checkTicket");
+               console.log("Check Ticket Event Fired...");
+             };
+             ws.onmessage = function (evt) 
+             { 
+              var received_msg = evt.data;
+              console.log("Ticket validity checking done by server...", received_msg);
+              if(received_msg=='True')
+                console.log("Ticket is valid! Web Service access granted!");
+              else
+                console.log("Ticket is invalid!");
+            };
+            ws.onclose = function()
+            {  
+              // websocket is closed.
+              console.log("Connection is closed..."); 
+            };
+          }
+          else
+          {
+           // The browser doesn't support WebSocket
+           console.log("WebSocket NOT supported by your Browser!");
+         }
+     }
+   </script>
+   <script src="script.js"></script>
+ </head>
+ <body>
+   <div class="login-card">
+    <h1>Register</h1><br>
+    <form>
+     <input type="text" id="ticket" name="user" placeholder="Ticket">
+     <input type="button" name="login" class="login login-submit" value="Get Service Access" onclick="javascript:WebSocketTest_CheckTicket(document.getElementById('ticket').value)">
+   </form>
+ </div>
+
+ <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+ <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+</body>
+</html>

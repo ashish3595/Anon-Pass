@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Log-in</title>
+
+<link rel='stylesheet prefetch' href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css'>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<script type="text/javascript">
+
+	var dVal=0;
+	var saveYClientVal = "";
+
+	function cryptoFunction(dVal,t){
+		return Math.pow(10,dVal)+t+1
+	}
+
+	function WebSocketTest_Login()
+	{
+		if ("WebSocket" in window)
+		{
+			console.log("WebSocket is supported by your Browser!");
+       		// Let us open a web socket
+           	var ws = new WebSocket("ws://localhost:9998/echo");
+           	
+           	ws.onopen = function()
+           	{
+              	// Web Socket is connected, send data using send()
+              	ws.send("try" + " " + "random" + " " + "login");
+            	console.log("Login Event Fired...");
+          	};
+          	ws.onmessage = function (evt) 
+          	{ 
+          		var received_msg = evt.data;
+          		console.log("Counter is received...", received_msg);
+          		var yClient=cryptoFunction(0, parseInt(received_msg));
+      			saveYClientVal = yClient;
+          		console.log("yClient value: ", yClient);
+          		ws.send(yClient);
+          	};
+            ws.onclose = function()
+            {  
+              // websocket is closed.
+              console.log("Connection is closed..."); 
+            };
+    	}
+        else
+        {
+           // The browser doesn't support WebSocket
+           console.log("WebSocket NOT supported by your Browser!");
+        }
+	}
+
+	function WebSocketTest_Reg(uname, pwd)
+	{
+		if ("WebSocket" in window)
+		{
+			console.log("WebSocket is supported by your Browser!");
+       		// Let us open a web socket
+           	var ws = new WebSocket("ws://localhost:9998/echo");
+           	
+           	ws.onopen = function()
+           	{
+              	// Web Socket is connected, send data using send()
+              	ws.send(uname + " " + pwd + " " + "register");
+            	console.log("Register Event Fired...");
+          	};
+          	ws.onmessage = function (evt)
+          	{ 
+          		var received_msg = evt.data;
+          		console.log("Key is received...", received_msg);
+          		dval=parseInt(received_msg);
+          	};
+            ws.onclose = function()
+            {  
+              // websocket is closed.
+              console.log("Connection is closed..."); 
+            };
+    	}
+        else
+        {
+           // The browser doesn't support WebSocket
+           console.log("WebSocket NOT supported by your Browser!");
+        }
+	}
+
+	function WebSocketTest_ReUp(uname, pwd)
+	{
+		if ("WebSocket" in window)
+		{
+			//console.log("WebSocket is supported by your Browser!");
+       		// Let us open a web socket
+           	var ws = new WebSocket("ws://localhost:9998/echo");
+           	
+           	ws.onopen = function()
+           	{
+              	// Web Socket is connected, send data using send()
+              	ws.send(saveYClientVal + " " + "random value" + " " + "reup");
+            	console.log("Reup Event Fired...");
+          	};
+          	ws.onmessage = function (evt)
+          	{ 
+          		var received_msg = evt.data;
+          		console.log("Key is received...", received_msg);
+          		dval=parseInt(received_msg);
+          	};
+            ws.onclose = function()
+            {  
+              // websocket is closed.
+              console.log("Connection is closed..."); 
+            };
+    	}
+        else
+        {
+           // The browser doesn't support WebSocket
+           console.log("WebSocket NOT supported by your Browser!");
+        }
+	}
+</script>
+<script src="script.js"></script>
+</head>
+<body>
+	<div class="login-card">
+		<h1>Register</h1><br>
+		<form>
+			<input type="text" id="uname" name="user" placeholder="Username">
+			<input type="password" id="pwd" name="pass" placeholder="Password">
+			<input type="button" name="login" class="login login-submit" value="Register" onclick="javascript:WebSocketTest_Reg(document.getElementById('uname').value, document.getElementById('pwd').value)">
+		</form>
+	</div>
+
+	<div class="login-card">
+		<h1>Log-in/Re-up</h1><br>
+		<form>
+			<input type="text" id="key" name="key" placeholder="Enter Key">
+			<input type="button" name="register" class="login login-submit" value="Login" onclick="javascript:WebSocketTest_Login()">
+			<input type="button" name="reup" class="login login-submit" value="Re-Up" onclick="javascript:WebSocketTest_ReUp()">
+		</form>
+	</div>
+
+	<!-- <div id="error"><img src="https://dl.dropboxusercontent.com/u/23299152/Delete-icon.png" /> Your caps-lock is on.</div> -->
+	<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+	<script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+</body>
+</html>
